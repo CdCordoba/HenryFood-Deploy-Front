@@ -64,15 +64,13 @@ const rootReducer = (state = initialState, action) => {
             (e) => e !== action.payload
           ))
         : (state.dietsSelected = [...state.dietsSelected, action.payload]);
+
       var recipesByDiet =
         action.payload === "reset"
           ? allRecipes
-          : allRecipes.filter((recipe) =>{
-            console.log(recipe.diets)
-              state.dietsSelected.every((e) => recipe.diets.includes(e))}
+          : allRecipes.filter((recipe) =>
+              state.dietsSelected.every((e) => recipe.diets.includes(e))
             );
-      console.log("Recipes By Diet",recipesByDiet)
-        
       if (Array.isArray(recipesByDiet) && !recipesByDiet.length) {
         return {
           ...state,
