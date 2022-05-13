@@ -15,7 +15,7 @@ export const UPDATE_RECIPE = "UPDATE_RECIPE";
 export const getAllRecipes = () => {
   return async function (dispatch) {
     const response = await axios
-      .get(`http://localhost:3001/recipes`)
+      .get(`https://foodpihenry.herokuapp.com/recipes`)
       .then((res) => dispatch({ type: GET_ALL_RECIPES, payload: res.data }))
 
       .catch((err) => console.log(err));
@@ -26,7 +26,7 @@ export const getAllRecipes = () => {
 export const getRecipeDetail = (idRecipe) => {
   return async (dispatch) => {
     const response = await axios
-      .get(`http://localhost:3001/recipes/${idRecipe}`)
+      .get(`https://foodpihenry.herokuapp.com/recipes/${idRecipe}`)
       .then((res) => dispatch({ type: GET_RECIPE_DETAIL, payload: res.data }))
       .catch((err) => console.log(err));
   };
@@ -38,7 +38,7 @@ export const removeRecipeDetail = () => {
 export const getDiets = () => {
   return async (dispatch) => {
     try {
-      const response = await axios.get("http://localhost:3001/types/");
+      const response = await axios.get("https://foodpihenry.herokuapp.com/types/");
       dispatch({ type: GET_DIETS, payload: response.data });
     } catch (error) {
       console.log(error);
@@ -50,7 +50,7 @@ export const getByName = (title) => {
   return async function (dispatch) {
     if (title.length) {
       const response = await axios
-        .get(`http://localhost:3001/recipes?title=${encodeURIComponent(title)}`)
+        .get(`https://foodpihenry.herokuapp.com/recipes?title=${encodeURIComponent(title)}`)
         .then((res) => dispatch({ type: GET_BY_TITLE, payload: res.data }))
 
         .catch((err) => console.log(err));
@@ -61,7 +61,7 @@ export const getByName = (title) => {
 export const createRecipe = (recipe) => {
   return async function () {
     axios
-      .post("http://localhost:3001/recipe", recipe)
+      .post("https://foodpihenry.herokuapp.com/recipe", recipe)
       .catch((err) => console.log(err.message));
   };
 };
@@ -95,7 +95,7 @@ export function getRecipesByCreated(payload) {
 }
 export function deleteRecipe(payload) {
   axios
-    .delete("http://localhost:3001/recipes/delete/" + payload)
+    .delete("https://foodpihenry.herokuapp.com/recipes/delete/" + payload)
     .catch((err) => console.log(err.message));
   return {
     type: DELETE_RECIPE,
@@ -107,7 +107,7 @@ export function updateRecipe(id, input) {
   return async (dispatch) => {
     try {
       const response = await axios.put(
-        "http://localhost:3001/recipes/update/" + id,
+        "https://foodpihenry.herokuapp.com/recipes/update/" + id,
         input
       );
       dispatch({ type: UPDATE_RECIPE, payload: response.data });
