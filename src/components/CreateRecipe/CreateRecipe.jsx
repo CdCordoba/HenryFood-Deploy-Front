@@ -18,26 +18,27 @@ const FormRecipe = () => {
       dietTypes: [],
    })
 
+   let [errors, setErrors] = React.useState({})
+
    const src = "https://images.food52.com/wulM9ARxwbCaQEeW0R6fmjisGZY=/fit-in/1200x1200/2d6bdab3-4206-4c3d-ac52-e428177251bc--default-recipe.jpg";
    const allDiets = useSelector(state => state.diets)
    const allRecipes = useSelector(state => state.allRecipes)
    const allTitles = allRecipes.map(e => e.title.toLowerCase());
 
-   function validate() {
-      let error = { title: null, summary: null, step: null, repeat: null };
-      input.title !== "" ? error.title = null : error.title = 'The Recipe Must Have a Title';
-      input.summary ? error.summary = null : error.summary = 'The Recipe Must Have a Description';
-      input.steps.length && input.steps[0] !== "" ? error.step = null : error.step = 'The Recipe Must Have Steps';
-      allTitles.includes(input.title.toLowerCase()) ? error.repeat = 'Sorry, That Title Already Exists' : error.repeat = null;
-      return error;
+   function validate(input) {
+      let errors = {}
+      if (input.title === "") errors.title = 'A title is required';
+      if (/^\s/.test(input.title)) errors.title = 'You must complete this Field';
+      if (/[`~,.<>;':"/[\]|{}()=_+-?¡!¿*{}´´¨´&%$#°]/.test(input.title)) errors.title = 'Name not allowed especials characters or numbers';
+      if (input.summary === "") errors.summary = 'A description is required';
+      if (allTitles.includes(input.title?.toLowerCase())) errors.title = 'This recipe already exists';
+      return errors
    }
-
    const dispatch = useDispatch();
    useEffect(() => {
-      dispatch(getAllRecipes())
-      dispatch(getDiets())
+      if (!allDiets.length) dispatch(getDiets());
       dispatch(removeRecipeDetail())
-   }, [dispatch]);
+   }, [dispatch, input]);
 
    const handlerChooseDiet = (e, i) => {
       let { id } = e.target;
@@ -62,28 +63,17 @@ const FormRecipe = () => {
          })
 
       } else {
-         // /[`~,.<>;':"/[\]|{}()=_+-?¡!¿*{}´´¨´&%$#°]/.test(activity.name)
          setInput({
             ...input,
-            [name]: e.target.value
+            [name]: value
          })
-
-      }
-      //Errors
-      errorsStyles(name)
-      function errorsStyles(prop) {
-         let errors = validate(e.target);
-         for (const key in errors) {
-            errors[prop] ? e.target.classList.add('error') : e.target.classList.remove('error')
-
-         }
+         setErrors(validate({ ...input, [name]: value }))
       }
    }
 
    function handleSubmit(e) {
       e.preventDefault();
-      let errors = validate();
-      if (errors.title || errors.summary || errors.diets || errors.step) {
+      if (errors.title || errors.summary || errors.repeat) {
          let sendErrors = [];
          for (const key in errors) {
             sendErrors.push(errors[key])
@@ -104,6 +94,7 @@ const FormRecipe = () => {
             dietTypes: [],
          })
          history.push("/home");
+         document.location.reload();
       }
    }
    return (
@@ -116,10 +107,13 @@ const FormRecipe = () => {
                      <h1>Create Your Own Recipe</h1>
 
                      <div className='formInputs'>
+                        <label>*: Required Fields</label>
+
                         <div>
+                           {errors.title && <label className='labelError'>{errors.title.toUpperCase()}</label>}
                            <div className='labels'>
-                              <label>Title: </label>
-                              <input type="text" name="title" maxLength="60" onChange={(e) => handleChange(e)} />
+                              <label>* Title: </label>
+                              <input className={errors.title ? 'error' : ''} type="text" name="title" maxLength="60" onChange={(e) => handleChange(e)} />
                               <label>Taste Score: </label>
                               <input type="range" max="100" min="1" name="score" onChange={(e) => handleChange(e)} />
                               <label>Health Score: </label>
@@ -141,8 +135,9 @@ const FormRecipe = () => {
                         </div>
 
                         <div className="inputDescription">
-                           <h4>Description: </h4>
-                           <textarea type="text" maxLength="500" placeholder='Tell us About Your Recipe...' name="summary" className='summary' onChange={(e) => handleChange(e)} />
+                           <h4>* Description: </h4>
+                           {errors.summary && <label className='labelError'>{errors.summary.toUpperCase()}</label>}
+                           <textarea className={errors.summary ? 'error summary' : 'summary'} type="text" maxLength="500" placeholder='Tell us About Your Recipe...' name="summary" onChange={(e) => handleChange(e)} />
                            <h4>Steps: </h4>
                            <textarea name='step' maxLength="500" placeholder='Tell us How to make it...' className='step' onChange={(e) => handleChange(e)} />
 

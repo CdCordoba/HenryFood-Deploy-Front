@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { getAllRecipes, getDiets, getRecipesByCreated, getRecipesByDiet, removeFilters, sortRecipes, removeRecipeDetail } from '../../redux/actions';
 import RecipeCard from '../RecipeCard/RecipeCard'
 import NavBar from '../NavBar/NavBar';
@@ -35,11 +34,10 @@ const Home = () => {
 
   const dispatch = useDispatch()
   useEffect(() => {
-    dispatch(getAllRecipes());
-    dispatch(getDiets());
+    if (!recipes.length) dispatch(getAllRecipes());
+    if (!allDiets.length) dispatch(getDiets());
     dispatch(removeRecipeDetail())
   }, [dispatch])
-
   if (errors.reset) {
     allDiets.forEach(e => {
       let diet = document.getElementById(e.name);
@@ -164,6 +162,7 @@ const Home = () => {
                       diets={recipe.dietTypes ? recipe.dietTypes.map(e => e.name) : recipe.diets}
                       score={recipe.score ? recipe.score : recipe.spoonacularScore}
                       healthScore={recipe.healthScore}
+                      createdDB={recipe.createdDB}
                     />
                   })}
                 </div>

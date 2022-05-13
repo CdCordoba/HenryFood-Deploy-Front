@@ -9,6 +9,8 @@ import {
   REMOVE_FILTERS,
   SORT_BY_NAME,
   REMOVE_RECIPE_DETAIL,
+  DELETE_RECIPE,
+  UPDATE_RECIPE,
 } from "../actions";
 
 const initialState = {
@@ -104,18 +106,14 @@ const rootReducer = (state = initialState, action) => {
       };
     case SORT_BY_NAME:
       let [value, id] = action.payload;
-      console.log("reducer");
-      console.log(value, id);
       function sort(value, prop) {
         const sortRecipes =
           value === "higher"
             ? state.recipes.sort((a, b) => {
-                console.log("entre a higher");
                 if (a.spoonacularScore && prop !== "title")
                   prop = "spoonacularScore";
                 if (b.spoonacularScore && prop !== "title")
                   prop = "spoonacularScore";
-                console.log(state.recipes);
                 if (a[prop] > b[prop]) {
                   return 1;
                 }
@@ -125,7 +123,6 @@ const rootReducer = (state = initialState, action) => {
                 return 0;
               })
             : state.recipes.sort((a, b) => {
-                console.log("entre a lower");
                 if (a.spoonacularScore && prop !== "title")
                   prop = "spoonacularScore";
                 if (b.spoonacularScore && prop !== "title")
@@ -146,6 +143,15 @@ const rootReducer = (state = initialState, action) => {
       return {
         ...state,
         recipes: sortRecipes,
+      };
+    case DELETE_RECIPE:
+      return {
+        ...state,
+        allRecipes: state.allRecipes.filter((e) => e.id !== action.payload),
+      };
+    case UPDATE_RECIPE:
+      return {
+        ...state,
       };
     default:
       return { ...state };
