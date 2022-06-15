@@ -61,7 +61,7 @@ const rootReducer = (state = initialState, action) => {
     case FILTER_BY_DIET:
       const allRecipes = state.allRecipes;
       state.errors = {};
-      state.dietsSelected.includes(action.payload)
+      state.dietsSelected?.includes(action.payload)
         ? (state.dietsSelected = state.dietsSelected.filter(
             (e) => e !== action.payload
           ))
@@ -71,7 +71,7 @@ const rootReducer = (state = initialState, action) => {
         action.payload === "reset"
           ? allRecipes
           : allRecipes.filter((recipe) =>
-              state.dietsSelected.every((e) => recipe.diets.includes(e))
+              state.dietsSelected?.every((e) => recipe?.diets?.includes(e))
             );
       if (Array.isArray(recipesByDiet) && !recipesByDiet.length) {
         return {
